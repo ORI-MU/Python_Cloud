@@ -1,0 +1,23 @@
+servers:
+  - name: 本机
+    ip: 127.0.0.1
+    port: 80
+  - name: Google-DNS
+    ip: 8.8.8.8
+    port: 53
+  - name: 内网-01
+    ip: 10.255.255.1
+    port: 3306
+  - name: 内网-02
+    ip: 192.0.2.1
+    port: 6379
+
+ping:
+  count: 2
+  timeout: 3
+
+http:
+  timeout: 5
+
+report:
+  dir: reports

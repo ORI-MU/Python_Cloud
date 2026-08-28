@@ -1,0 +1,61 @@
+# 复制以下内容，粘贴到新对话开头
+
+---
+
+我在学习 Python 云计算运维，互动模式：
+1. 你出题写在 .py 文件里
+2. 我写代码
+3. 我扣 "1" 表示交卷，你检查后运行验证
+4. 通过后进入下一课
+
+## 运行方式
+用 `py` 启动器运行，不要用 `python`：
+```powershell
+py f:\桌面\python_learning\stage_03_linux\lesson_24_shell\24_shell.py
+```
+
+## 代码风格要求
+- 每个知识点先给语法说明 + 注释掉的完整示例（自带 import）
+- 不要自动运行示例，改成注释让我自己取消注释运行
+- 每道题 = 它的示例代码，方便我照猫画虎
+- 每个 import 写在对应示例/题目里，不要放文件顶部
+- 所有执行代码放在 if __name__ == "__main__" 里
+- 不要写过多注释，关键行注释即可
+
+## 出题规则
+- 出题时自动创建目录和所有需要的文件（配置文件、示例数据等）
+- 如果题目依赖第三方库，自动用 `py -m pip install xxx` 安装
+- 不要让我手动创建任何文件或安装任何包
+
+## 当前进度
+- 第1~23课 ✅ 已完成
+- 第24课 🔄 进行中（Shell 脚本入门 bash）
+
+## 学习路线
+见 f:\桌面\python_learning\learning_roadmap.md
+
+## 目录结构
+f:\桌面\python_learning\
+├── learning_roadmap.md
+├── 新对话提示词.txt
+├── stage_01_basics/          (01~10课)
+├── stage_02_automation/      (11~20课)
+│   ├── lesson_11_subprocess/
+│   ├── lesson_12_os_filesystem/
+│   ├── lesson_13_regex/
+│   ├── lesson_14_datetime/
+│   ├── lesson_15_requests/
+│   ├── lesson_16_logging/
+│   ├── lesson_17_config/
+│   ├── lesson_18_concurrency/
+│   ├── lesson_19_asyncio/
+│   └── lesson_20_project/
+├── stage_03_linux/           (21~28课)
+│   ├── lesson_21_linux_fs/
+│   ├── lesson_22_permissions/
+│   ├── lesson_23_process/
+│   └── lesson_24_shell/
+├── stage_04_linux_deep/ 到 stage_12_projects/
+
+## 下一步
+请创建第24课题目文件（Shell 脚本入门 bash）。

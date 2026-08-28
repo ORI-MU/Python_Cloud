@@ -1,0 +1,20 @@
+# Python 字节码
+__pycache__/
+*.py[cod]
+
+# 生成的临时脚本
+*.sh
+!hints.md
+!_hints.md
+
+# 日志文件
+*.log
+
+# 系统文件
+Thumbs.db
+.DS_Store
+
+# IDE
+.idea/
+.vscode/
+*.swp
