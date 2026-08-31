@@ -2,10 +2,8 @@
 __pycache__/
 *.py[cod]
 
-# 生成的临时脚本
-*.sh
-!hints.md
-!_hints.md
+# 提示文件
+*hints.md
 
 # 日志文件
 *.log
