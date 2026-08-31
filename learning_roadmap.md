@@ -266,6 +266,7 @@ py f:\桌面\python_learning\stage_03_linux\lesson_21_linux_fs\21_linux_fs.py
 ### 自动 Git 推送
 - 每道题通过后，自动执行 `git add . && git commit -m "xxx" && git push`
 - 远程仓库：`https://github.com/ORI-MU/Python_Cloud.git`
+- `.gitignore` 不要忽略 `.sh` 文件（Shell 脚本也是学习成果）
 
 ### 运行方式
 ```powershell

@@ -26,6 +26,17 @@ py f:\桌面\python_learning\stage_03_linux\lesson_24_shell\24_shell.py
 - 出题时自动创建目录和所有需要的文件（配置文件、示例数据等）
 - 如果题目依赖第三方库，自动用 `py -m pip install xxx` 安装
 - 不要让我手动创建任何文件或安装任何包
+- 出题后运行 `py <文件路径>` 验证文件可正常执行
+
+## 题目难度标准
+- 对标 HCIE 考点标记：有 🎯 的课可以适当拔高，无标记的课以**能看懂、会改、能跑**为目标
+- 每道题 = 知识点示例的变体，用户能照猫画虎完成
+- 优先考虑 Windows 兼容性，Linux 专有命令给出降级方案
+
+## Git 自动推送
+- 每道题通过后，自动执行 `git add . && git commit -m "xxx" && git push`
+- 远程仓库：`https://github.com/ORI-MU/Python_Cloud.git`
+- 不要忽略 `.sh` 文件
 
 ## 当前进度
 - 第1~23课 ✅ 已完成
