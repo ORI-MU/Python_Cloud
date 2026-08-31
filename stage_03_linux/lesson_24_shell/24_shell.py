@@ -79,6 +79,41 @@
 # script = Path(__file__).parent / "vars.sh"
 # script.write_text("""#!/bin/bash
 # name="cloud_engineer"
+def batch_execute_commands(servers=None, commands=None, timeout=10):
+    servers = servers or ["web-01", "web-02", "db-01"]
+    commands = commands or ["uptime", "whoami", "pwd"]
+
+    print("=== 批量执行报告 ===")
+    successes = 0
+    fails = 0
+
+    for server in servers:
+        print(f"[{server}]")
+        for cmd in commands:
+            try:
+                start = time.perf_counter()
+                result = subprocess.run(
+                    ["bash", "-c", cmd],
+                    capture_output=True, encoding="utf-8",
+                    text=True, timeout=timeout
+                )
+                elapsed = time.perf_counter() - start
+                if result.returncode == 0:
+                    status = "OK"
+                    successes += 1
+                else:
+                    status = "FAILED"
+                    fails += 1
+                print(f"  {cmd} -> {status} ({elapsed:.1f}s)")
+            except subprocess.TimeoutExpired:
+                fails += 1
+                print(f"  {cmd} -> FAILED (timeout)")
+
+    total = successes + fails
+    print(f" === 成功: {successes}/{total}, 失败: {fails}/{total} ===")
+
+batch_execute_commands()
+
 # count=100
 # now=$(date +%H:%M:%S)
 
