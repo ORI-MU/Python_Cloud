@@ -527,7 +527,44 @@ if __name__ == "__main__":
 # ============================================================
 
 # 请在下方写下你的答案：
+import os
+import time
+from pathlib import Path
+import subprocess
 
+print("=== 批量执行报告 ===")
+servers = ["web-01", "web-02", "db-01"]
+commands = ["uptime","whoami","pwd"]
+
+successes = 0
+fails = 0
+
+for server in servers:
+    print(f"[{server}]")
+    for cmd in commands:
+        try:
+            start = time.perf_counter()
+            result = subprocess.run(
+                ["bash", "-c", cmd],
+                capture_output=True, encoding="utf-8",
+                text=True, timeout=10
+            )
+            elapsed = time.perf_counter() - start
+            if result.returncode == 0:
+                status = "OK"
+                successes +=1
+            else:
+                status = "FAILED"
+                fails += 1
+            print(f"  {cmd} -> {status} ({elapsed:.1f}s)")
+        except subprocess.TimeoutExpired:
+            fails += 1
+            print(f"  {cmd} -> FAILED (timeout)")
+
+total = successes + fails
+print(f" === 成功: {successes}/{total}, 失败: {fails}/{total} ===")
+
+        
 
 # ============================================================
 # ---- 题目3：用 Python 解析 Shell 脚本输出 — 日志分析 ----
@@ -567,29 +604,44 @@ if __name__ == "__main__":
 # ============================================================
 
 # 请在下方写下你的答案：
+from collections import defaultdict
+from pathlib import Path
+import subprocess
+import os
 
+log_script = Path(__file__).parent / "collect_logs.sh"
+log_script.write_text("""#!/bin/bash
+echo "2024-01-01 10:00:01|INFO|nginx|连接数: 150"
+echo "2024-01-01 10:00:02|WARN|mysql|慢查询: 2.3s"
+echo "2024-01-01 10:00:03|ERROR|redis|连接超时"
+echo "2024-01-01 10:00:04|INFO|nginx|请求处理完成"
+echo "2024-01-01 10:00:05|INFO|app|用户登录成功"
+echo "2024-01-01 10:00:06|WARN|nginx|响应时间: 1.5s"
+echo "2024-01-01 10:00:07|INFO|mysql|查询完成: 0.1s"
+echo "2024-01-01 10:00:08|ERROR|nginx|端口冲突"
+echo "2024-01-01 10:00:09|INFO|app|数据同步完成"
+echo "2024-01-01 10:00:10|WARN|redis|内存使用率: 75%"
+""", encoding="utf-8")
 
-# ============================================================
-# ============================================================
-# if __name__ == "__main__":
-#     print("=" * 60)
-#     print("第24课：Shell 脚本入门 bash")
-#     print("=" * 60)
-#     print()
-#     print("请取消注释上方的知识点示例和题目来运行")
-#     print("运行方式：")
-#     print("  py f:\\桌面\\python_learning\\stage_03_linux\\lesson_24_shell\\24_shell.py")
-#     print()
-#     print("知识点示例（取消注释即可运行）：")
-#     print("  知识点1：Shell 脚本基础")
-#     print("  知识点2：Bash 变量")
-#     print("  知识点3：Bash 条件判断")
-#     print("  知识点4：Bash 循环")
-#     print("  知识点5：Bash 函数")
-#     print("  知识点6：特殊变量与退出码")
-#     print("  知识点7：Python 调用 Shell 脚本")
-#     print()
-#     print("题目（请完成代码后运行）：")
-#     print("  题目1：用 Python 生成健康检查脚本并执行")
-#     print("  题目2：批量执行 Shell 命令")
-#     print("  题目3：用 Python 解析 Shell 脚本输出")
+results = subprocess.run(["bash",str(log_script)], capture_output=True, text=True, encoding="utf-8")
+lines = results.stdout.strip().splitlines()
+level_groups = defaultdict(list)
+
+for line in lines:
+    if not line.strip():
+        continue
+    parts = line.split("|")
+    if len(parts) !=4:
+        continue
+    timestamp, level, service, message = parts
+    level_groups[level].append((timestamp, service, message))
+
+print("=== 日志分析报告 ===")
+print(f"总行数: {len(lines)}")
+for level in ["INFO", "WARN", "ERROR"]:
+    count = len(level_groups.get(level, []))
+    print(f"{level}: {count}条")
+print()
+print("=== ERROR 日志详情 ===")
+for timestamp, service, message in level_groups.get("ERROR", []):
+    print(f"{timestamp} {service}   → {message}")
