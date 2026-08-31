@@ -566,6 +566,7 @@ import os
 import time
 from pathlib import Path
 import subprocess
+from collections import defaultdict
 
 print("=== 批量执行报告 ===")
 servers = ["web-01", "web-02", "db-01"]
