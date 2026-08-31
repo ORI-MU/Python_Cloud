@@ -263,6 +263,10 @@ py f:\桌面\python_learning\stage_03_linux\lesson_21_linux_fs\21_linux_fs.py
 - 每道题 = 知识点示例的变体，用户能照猫画虎完成
 - 优先考虑 Windows 兼容性，Linux 专有命令给出降级方案
 
+### 自动 Git 推送
+- 每道题通过后，自动执行 `git add . && git commit -m "xxx" && git push`
+- 远程仓库：`https://github.com/ORI-MU/Python_Cloud.git`
+
 ### 运行方式
 ```powershell
 py f:\桌面\python_learning\stage_XX_xxx\lesson_XX_xxx\XX_xxx.py
