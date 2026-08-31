@@ -11,7 +11,7 @@
 ## 运行方式
 用 `py` 启动器运行，不要用 `python`：
 ```powershell
-py f:\桌面\python_learning\stage_03_linux\lesson_24_shell\24_shell.py
+py f:\桌面\python_learning\stage_03_linux\lesson_25_text_processing\25_text_processing.py
 ```
 
 ## 代码风格要求
@@ -28,6 +28,12 @@ py f:\桌面\python_learning\stage_03_linux\lesson_24_shell\24_shell.py
 - 不要让我手动创建任何文件或安装任何包
 - 出题后运行 `py <文件路径>` 验证文件可正常执行
 
+## 综合实战题目
+- 每个 stage（单元）结束后，增加一课综合实战（如 stage_02 的 lesson_20_project）
+- 实战题目模拟真实运维故障场景，串联本单元所有知识点
+- 包含：故障排查 + 数据分析 + 批量修复 + 生成报告
+- 数据量比普通题目大（100~1000行），贴近真实环境
+
 ## 题目难度标准
 - 对标 HCIE 考点标记：有 🎯 的课可以适当拔高，无标记的课以**能看懂、会改、能跑**为目标
 - 每道题 = 知识点示例的变体，用户能照猫画虎完成
@@ -39,8 +45,8 @@ py f:\桌面\python_learning\stage_03_linux\lesson_24_shell\24_shell.py
 - 不要忽略 `.sh` 文件
 
 ## 当前进度
-- 第1~23课 ✅ 已完成
-- 第24课 🔄 进行中（Shell 脚本入门 bash）
+- 第1~24课 ✅ 已完成
+- 第25课 🔄 进行中（文本处理三剑客 grep/awk/sed 🎯）
 
 ## 学习路线
 见 f:\桌面\python_learning\learning_roadmap.md
@@ -65,8 +71,9 @@ f:\桌面\python_learning\
 │   ├── lesson_21_linux_fs/
 │   ├── lesson_22_permissions/
 │   ├── lesson_23_process/
-│   └── lesson_24_shell/
+│   ├── lesson_24_shell/
+│   └── lesson_25_text_processing/
 ├── stage_04_linux_deep/ 到 stage_12_projects/
 
 ## 下一步
-请创建第24课题目文件（Shell 脚本入门 bash）。
+请创建第25课题目文件（文本处理三剑客 grep/awk/sed 🎯）。

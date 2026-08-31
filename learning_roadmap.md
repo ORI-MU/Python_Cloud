@@ -46,7 +46,7 @@
 | 21 | Linux 文件系统、目录结构 | ✅ |
 | 22 | 用户与权限管理 chmod / chown | ✅ |
 | 23 | 进程管理 ps / top / kill | ✅ |
-| 24 | Shell 脚本入门 bash | |
+| 24 | Shell 脚本入门 bash | ✅ |
 | 25 | 文本处理三剑客 grep / awk / sed | ✅ |
 | 26 | 网络工具 curl / netstat / ss | ✅ |
 | 27 | systemd 服务管理 | ✅ |

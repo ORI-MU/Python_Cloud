@@ -285,14 +285,21 @@
 # 4. 把匹配结果按文件名分组，格式化输出
 # 5. 统计总匹配行数和涉及文件数
 #
-# 预期输出：
+# 预期输出（grep -n -B 1 -A 1 格式，- 开头=上下文，: 开头=匹配行）：
 #   === 日志搜索结果: "timeout" ===
 #   [app.log]
-#     行5: 2024-01-15 10:23:45 WARN nginx upstream timeout (5.0s)
-#     行12: 2024-03-20 14:50:22 ERROR db connection timeout
+#     2-2024-01-15 09:05:13 INFO ...
+#     3:2024-01-15 10:23:45 WARN nginx upstream timeout (5.0s)
+#     4-2024-01-15 10:23:46 INFO ...
+#     --
+#     9-2024-01-15 14:30:03 INFO ...
+#     10:2024-01-15 14:30:04 ERROR redis connection timeout
+#     11-2024-03-20 09:15:00 INFO ...
 #   [system.log]
-#     行8: 2024-03-15 09:30:00 ERROR service timeout after 30s
-#   === 共 2 个文件, 3 处匹配 ===
+#     3-2024-01-15 10:15:30 WARN ...
+#     4:2024-03-15 09:30:00 ERROR service timeout after 30s
+#     5-2024-03-15 09:30:01 INFO ...
+#   === 共 2 个文件, 2 处匹配 ===
 #
 # 提示：
 #   - 用 Path.glob("*.log") 遍历文件
@@ -301,7 +308,36 @@
 # ============================================================
 
 # 请在下方写下你的答案：
+import subprocess
+from collections import defaultdict
+from pathlib import Path
 
+def search_logs(keyword, context_lines=1):
+    logs_dir = Path(__file__).parent / "sample_logs"
+    groups = defaultdict(list)       # 按文件名分组存储匹配行
+    total_match = 0
+
+    for log in sorted(logs_dir.glob("*.log")):
+        # grep -n 显示行号, -B 前N行, -A 后N行
+        result = subprocess.run(
+                ["grep", "-n", f"-B{context_lines}", f"-A{context_lines}", keyword, str(log)],
+                capture_output=True, encoding="utf-8", text=True
+                )
+        if result.stdout.strip():
+            groups[log.name] = result.stdout.strip().splitlines()
+            total_match += 1
+
+    print(f'=== 日志搜索结果: "{keyword}" ===')
+    for fname, lines in groups.items():
+        print(f"[{fname}]")
+        for line in lines:
+            print(f"  {line}")
+    print(f"=== 共 {len(groups)} 个文件, {total_match} 处匹配 ===")
+
+
+if __name__ == "__main__":
+    search_logs("timeout")
+    search_logs("ERROR", context_lines=2)
 
 # ============================================================
 # ---- 题目2：日志统计分析 — awk 实战 ----
@@ -342,6 +378,48 @@
 # ============================================================
 
 # 请在下方写下你的答案：
+import subprocess
+from pathlib import Path
+from collections import Counter
+
+def analyze_access_log(log_path):
+    log_path = Path(log_path)
+    total = subprocess.run(
+        ["awk", "END{print NR}", str(log_path)],
+        capture_output=True,text=True,encoding="utf-8"
+        )
+    totle_reqs = int(total.stdout.strip())
+
+    status = subprocess.run(
+        ["awk", "{print $9}", str(log_path)],
+        capture_output=True,text=True,encoding="utf-8"
+        )
+    code_dist = Counter(status.stdout.strip().splitlines())
+
+    ip_result = subprocess.run(
+        ["awk", "{print $1}", str(log_path)],
+        capture_output=True, text=True, encoding="utf-8"
+        )
+    ip_dist = Counter(ip_result.stdout.strip().splitlines())
+
+    avg_result = subprocess.run(
+        ["awk", "{sum+=$NF; count++} END{print sum/count}", str(log_path)],
+        capture_output=True, text=True
+        )
+    avg_size = avg_result.stdout.strip()
+    print("=== Nginx 访问日志分析 ===")
+    print(f"总请求数: {totle_reqs}")
+    print("状态码分布:")
+    for code, count in sorted(code_dist.items()):
+        print(f"  {code}: {count}")
+    print("Top 3 IP:")
+    for ip, count in ip_dist.most_common(3):
+        print(f"  {ip}: {count} 次")
+    print(f"平均响应大小: {avg_size} bytes")
+
+if __name__ == "__main__":
+    log_path = Path(__file__).parent / "sample_logs" / "access.log"
+    analyze_access_log(str(log_path))
 
 
 # ============================================================
@@ -380,6 +458,41 @@
 # ============================================================
 
 # 请在下方写下你的答案：
+import subprocess
+from pathlib import Path
+import shutil
+
+def update_config(config_path, changes):
+    config_path = Path(config_path)
+    bak_path = config_path.with_suffix(config_path.suffix + ".bak")
+    shutil.copy(config_path, bak_path)       # 先备份
+
+    print(f"=== 配置变更: {config_path.name} ===")
+    for key, new_val in changes.items():
+        # 提取旧值
+        old = subprocess.run(
+            ["sed", "-n", f"s/^{key} = //p", str(config_path)],
+            capture_output=True, text=True, encoding="utf-8"
+        )
+        old_val = old.stdout.strip()
+
+        # 原地替换
+        subprocess.run(
+            ["sed", "-i", f"s/^{key} = .*/{key} = {new_val}/", str(config_path)],
+            capture_output=True, text=True
+        )
+        print(f"  [{key}]      {old_val} → {new_val}")
+    print(f"=== 备份已保存: {bak_path.name} ===")
+
+
+if __name__ == "__main__":
+    config_path = Path(__file__).parent / "app.conf"
+    changes = {
+        "host": "192.168.1.100",
+        "port": "9090",
+        "max_connections": "200"
+    }
+    update_config(str(config_path), changes)
 
 
 # ============================================================
@@ -402,17 +515,17 @@
 #
 # 预期输出：
 #   === ERROR 分析报告 ===
-#   总 ERROR 数: 8
+#   总 ERROR 数: 7
 #   按服务分布:
-#     nginx:  3 次
-#     mysql:  2 次
+#     nginx:  2 次
 #     redis:  2 次
+#     mysql:  1 次
+#     db:     1 次
 #     app:    1 次
 #   按小时分布:
-#     09:00~09:59: 2 次
-#     10:00~10:59: 3 次
-#     14:00~14:59: 2 次
-#     22:00~22:59: 1 次
+#     10:00~10:59: 1 次
+#     14:00~14:59: 4 次
+#     22:00~22:59: 2 次
 #
 # 提示：
 #   - grep "ERROR" 提取行，再 awk 处理
@@ -422,9 +535,53 @@
 # ============================================================
 
 # 请在下方写下你的答案：
+import subprocess
+from pathlib import Path
+from collections import Counter
+
+def analyze_errors(log_path):
+    log_path = Path(log_path)
+
+    # grep 提取所有 ERROR 行
+    result = subprocess.run(
+        ["grep", "ERROR", str(log_path)],
+        capture_output=True, text=True, encoding="utf-8"
+    )
+    error_lines = result.stdout.strip().splitlines()
+    total_errors = len(error_lines)
+
+    if total_errors == 0:
+        print("=== ERROR 分析报告 ===")
+        print("没有 ERROR 日志")
+        return
+
+    # awk 提取第4列（服务名）
+    awk_svc = subprocess.run(
+        ["awk", "{print $4}"],
+        input=result.stdout, capture_output=True, text=True
+    )
+    svc_dist = Counter(awk_svc.stdout.strip().splitlines())
+
+    # awk 提取第2列（时间），再 cut 取小时
+    awk_time = subprocess.run(
+        ["awk", "{print $2}"],
+        input=result.stdout, capture_output=True, text=True
+    )
+    hour_dist = Counter()
+    for t in awk_time.stdout.strip().splitlines():
+        hour = t.split(":")[0]
+        hour_dist[hour] += 1
+
+    print("=== ERROR 分析报告 ===")
+    print(f"总 ERROR 数: {total_errors}")
+    print("按服务分布:")
+    for svc, cnt in svc_dist.most_common():
+        print(f"  {svc}:  {cnt} 次")
+    print("按小时分布:")
+    for h in sorted(hour_dist):
+        print(f"  {h}:00~{h}:59: {hour_dist[h]} 次")
 
 
 if __name__ == "__main__":
-    print("第25课：文本处理三剑客 grep / awk / sed 🎯")
-    print("请完成上方题目，取消注释示例代码运行查看效果")
-    print("完成后扣 1 交卷")
+    log_path = Path(__file__).parent / "sample_logs" / "app.log"
+    analyze_errors(str(log_path))

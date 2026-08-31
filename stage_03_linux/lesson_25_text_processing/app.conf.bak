@@ -1,7 +1,7 @@
 # 应用配置文件
-host = 192.168.1.100
-port = 9090
-max_connections = 200
+host = localhost
+port = 3306
+max_connections = 100
 timeout = 30
 log_level = INFO
 debug = false
