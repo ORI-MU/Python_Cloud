@@ -1,0 +1,8 @@
+# 服务器资源使用统计
+server, cpu_percent, memory_percent, disk_percent
+web-01, 45, 60, 30
+web-02, 78, 55, 45
+db-01, 23, 85, 70
+db-02, 15, 90, 65
+cache-01, 67, 40, 20
+cache-02, 55, 35, 25
